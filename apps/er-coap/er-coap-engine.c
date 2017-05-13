@@ -340,7 +340,11 @@ PROCESS_THREAD(coap_engine, ev, data)
   rest_activate_resource(&res_well_known_core, ".well-known/core");
 
   coap_register_as_transaction_handler();
-  coap_init_connection(SERVER_LISTEN_PORT);
+
+  if(coap_init_connection(SERVER_LISTEN_PORT) != 0) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
 
   while(1) {
     PROCESS_YIELD();

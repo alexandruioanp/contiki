@@ -275,16 +275,21 @@ coap_get_variable(const char *buffer, size_t length, const char *name,
 /*---------------------------------------------------------------------------*/
 /*- Internal API ------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
-void
+int
 coap_init_connection(uint16_t port)
 {
   /* new connection with remote host */
   udp_conn = udp_new(NULL, 0, NULL);
-  udp_bind(udp_conn, port);
-  PRINTF("Listening on port %u\n", uip_ntohs(udp_conn->lport));
+  if(udp_conn != NULL) {
+    udp_bind(udp_conn, port);
+    PRINTF("Listening on port %u\n", uip_ntohs(udp_conn->lport));
 
-  /* initialize transaction ID */
-  current_mid = random_rand();
+    /* initialize transaction ID */
+    current_mid = random_rand();
+    return 0;
+  } else {
+    return 1;
+  }
 }
 /*---------------------------------------------------------------------------*/
 uint16_t

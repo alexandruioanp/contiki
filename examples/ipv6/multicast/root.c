@@ -153,6 +153,11 @@ PROCESS_THREAD(rpl_root_process, ev, data)
 
   prepare_mcast();
 
+  if(mcast_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   etimer_set(&et, START_DELAY * CLOCK_SECOND);
   while(1) {
     PROCESS_YIELD();

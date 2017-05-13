@@ -39,6 +39,8 @@
 #include "shell.h"
 #include "contiki-net.h"
 
+#include <stdio.h>
+
 /*---------------------------------------------------------------------------*/
 PROCESS(shell_udpsend_process, "udpsend");
 SHELL_COMMAND(udpsend_command,
@@ -98,6 +100,12 @@ PROCESS_THREAD(shell_udpsend_process, ev, data)
   
   if(next != nextptr) {
     local_port = shell_strtolong(nextptr, &nextptr);
+
+    if(udpconn == NULL) {
+      printf("No UDP connection available, exiting the process!\n");
+      PROCESS_EXIT();
+    }
+
     udp_bind(udpconn, uip_htons(local_port));
   }
   running = 1;

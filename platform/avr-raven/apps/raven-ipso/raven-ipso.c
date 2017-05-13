@@ -245,6 +245,12 @@ PROCESS_THREAD(raven_lcd_process, ev, data)
   
   /* set destination parameters*/
   udp_conn = udp_new(&udp_addr, UIP_HTONS(0xF0B0), NULL);
+
+  if(udp_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   /*set local port */
   udp_bind(udp_conn, UIP_HTONS(0xF0B0+1));
   

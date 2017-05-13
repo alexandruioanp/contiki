@@ -159,6 +159,12 @@ PROCESS_THREAD(udp_server_process, ev, data)
 #endif
 
   server_conn = udp_new(NULL, UIP_HTONS(0), NULL);
+
+  if(server_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   udp_bind(server_conn, UIP_HTONS(3000));
 
   PRINTF("Listen port: 3000, TTL=%u\n", server_conn->ttl);

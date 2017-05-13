@@ -357,6 +357,12 @@ PROCESS_THREAD(servreg_hack_process, ev, data)
 
   /* Create inbound UDP connection. */
   inconn = udp_new(NULL, UIP_HTONS(UDP_PORT), NULL);
+
+  if(inconn == NULL) {
+    printf("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   udp_bind(inconn, UIP_HTONS(UDP_PORT));
 
   etimer_set(&periodic, PERIOD_TIME);

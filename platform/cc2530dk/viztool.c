@@ -272,6 +272,12 @@ PROCESS_THREAD(viztool_process, ev, data)
   PROCESS_BEGIN();
 
   server_conn = udp_new(NULL, UIP_HTONS(0), NULL);
+
+  if(server_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   udp_bind(server_conn, UIP_HTONS(VIZTOOL_UDP_PORT));
 
   while(1) {

@@ -185,6 +185,12 @@ PROCESS_THREAD(node_process, ev, data)
 
   /* Listen to any host on 8185 */
   udp_conn_rx = udp_new(NULL, 0, NULL);
+
+  if(udp_conn_rx == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   udp_bind(udp_conn_rx, UIP_HTONS(8185));
     
   /* Wait for timer event 
@@ -204,7 +210,11 @@ PROCESS_THREAD(node_process, ev, data)
         sample_count = ((tsch_current_asn.ls4b/((1000/(TSCH_CONF_DEFAULT_TIMESLOT_LENGTH/1000)))/INTERVAL)+node_mac[7]) % (SIZE_OF_WAVEFORM-1);
         printf("%d sec. waveform=%s. cnt=%d. value=%d\n", total_time, waveform_table[selected_waveform].str, sample_count, waveform_table[selected_waveform].table[sample_count]);
         my_sprintf(udp_buf, waveform_table[selected_waveform].table[sample_count]);
-        uip_udp_packet_send(udp_conn_tx, udp_buf, strlen(udp_buf));
+        if(udp_conn_tx != NULL) {
+          uip_udp_packet_send(udp_conn_tx, udp_buf, strlen(udp_buf));
+        } else {
+          PRINTF("No UDP connection available!\n");
+        }
         /* Switch LED on and start blink timer (callback timer) */
         process_post(&led_process, PROCESS_EVENT_CONTINUE, post_mssg);
       } else {

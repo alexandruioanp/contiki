@@ -1171,6 +1171,12 @@ PROCESS_THREAD(resolv_process, ev, data)
 
 #if RESOLV_CONF_SUPPORTS_MDNS
   PRINTF("resolver: Supports MDNS.\n");
+
+  if(resolv_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   uip_udp_bind(resolv_conn, UIP_HTONS(MDNS_PORT));
 
 #if NETSTACK_CONF_WITH_IPV6

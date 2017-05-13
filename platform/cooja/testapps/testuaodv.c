@@ -56,10 +56,21 @@ PROCESS_THREAD(test_uaodv_process, ev, data)
 
   uip_ipaddr(&addr, 0,0,0,0);
   in_conn = udp_new(&addr, UIP_HTONS(0), NULL);
+
+  if(in_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   uip_udp_bind(in_conn, UIP_HTONS(COOJA_PORT));
 
   uip_ipaddr(&addr, 10,10,10,4);
   out_conn = udp_new(&addr, UIP_HTONS(COOJA_PORT), NULL);
+
+  if(out_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
 
   button_sensor.configure(SENSORS_ACTIVE, 1);
 

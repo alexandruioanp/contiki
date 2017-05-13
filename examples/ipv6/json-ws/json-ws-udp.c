@@ -85,6 +85,12 @@ json_ws_udp_setup(const char *host, uint16_t port)
 
   /* new connection with remote host */
   client_conn = udp_new(&server_ipaddr, UIP_HTONS(server_port), NULL);
+
+  if(client_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    return 0;
+  }
+
   udp_bind(client_conn, UIP_HTONS(SENDER_PORT));
 
   PRINTF("Created a connection with the server ");

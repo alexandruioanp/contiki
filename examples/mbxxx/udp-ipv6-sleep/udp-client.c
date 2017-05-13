@@ -147,6 +147,12 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   /* new connection with remote host */
   client_conn = udp_new(&ipaddr, UIP_HTONS(3000), NULL);
+
+  if(client_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   udp_bind(client_conn, UIP_HTONS(3001));
 
   PRINTF("Created a connection with the server ");

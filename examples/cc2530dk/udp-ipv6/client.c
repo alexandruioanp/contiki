@@ -122,6 +122,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
   l_conn = udp_new(&ipaddr, UIP_HTONS(3000), NULL);
   if(!l_conn) {
     PRINTF("udp_new l_conn error.\n");
+    PROCESS_EXIT();
   }
   udp_bind(l_conn, UIP_HTONS(LOCAL_CONN_PORT));
 
@@ -134,6 +135,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
   g_conn = udp_new(&ipaddr, UIP_HTONS(3000), NULL);
   if(!g_conn) {
     PRINTF("udp_new g_conn error.\n");
+    PROCESS_EXIT();
   }
   udp_bind(g_conn, UIP_HTONS(GLOBAL_CONN_PORT));
 

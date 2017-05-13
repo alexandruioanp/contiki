@@ -103,6 +103,12 @@ PROCESS_THREAD(udp_server_process, ev, data)
   print_local_addresses();
 
   server_conn = udp_new(NULL, UIP_HTONS(3001), NULL);
+
+  if(server_conn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   udp_bind(server_conn, UIP_HTONS(3000));
 
   while(1) {

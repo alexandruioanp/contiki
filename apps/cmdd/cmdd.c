@@ -154,6 +154,11 @@ PROCESS_THREAD(cmdd_process, ev, data)
   uip_ipaddr(&ipaddr, 255,255,255,255);
   udpconn = udp_new(&ipaddr, UIP_HTONS(6712), NULL);
 
+  if(udpconn == NULL) {
+    PRINTF("No UDP connection available, exiting the process!\n");
+    PROCESS_EXIT();
+  }
+
   while(1) {
     PROCESS_WAIT_EVENT();
     if(ev == tcpip_event) {
