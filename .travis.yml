@@ -22,19 +22,19 @@ before_script:
     fi
 
   ## Install msp430 toolchain
-  - sudo apt-get -qq install lib32z1
-  - $WGET http://simonduq.github.io/resources/mspgcc-4.7.2-compiled.tar.bz2 &&
-    tar xjf mspgcc*.tar.bz2 -C /tmp/ &&
-    sudo cp -f -r /tmp/msp430/* /usr/local/ &&
-    rm -rf /tmp/msp430 mspgcc*.tar.bz2 &&
-    msp430-gcc --version
+  # - sudo apt-get -qq install lib32z1
+  # - $WGET http://simonduq.github.io/resources/mspgcc-4.7.2-compiled.tar.bz2 &&
+  #   tar xjf mspgcc*.tar.bz2 -C /tmp/ &&
+  #   sudo cp -f -r /tmp/msp430/* /usr/local/ &&
+  #   rm -rf /tmp/msp430 mspgcc*.tar.bz2 &&
+  #   msp430-gcc --version
 
   ## Install avr toolchain
-  - $WGET http://atiselsts.github.io/resources/avr-gcc-4.9.2-compiled.tar.bz2 &&
-    tar xjf avr-gcc*.tar.bz2 -C /tmp/ &&
-    sudo cp -f -r /tmp/avr-gcc/* /usr/local/ &&
-    rm -rf /tmp/avr-gcc avr-gcc*.tar.bz2 &&
-    avr-gcc --version
+  # - $WGET http://atiselsts.github.io/resources/avr-gcc-4.9.2-compiled.tar.bz2 &&
+  #   tar xjf avr-gcc*.tar.bz2 -C /tmp/ &&
+  #   sudo cp -f -r /tmp/avr-gcc/* /usr/local/ &&
+  #   rm -rf /tmp/avr-gcc avr-gcc*.tar.bz2 &&
+  #   avr-gcc --version
 
   ## Install 32-bit compatibility libraries
   - sudo apt-get -qq install libc6:i386 libgcc1:i386 gcc-4.6-base:i386
@@ -98,7 +98,7 @@ before_script:
       rm -rf /tmp/ba-elf-gcc* /tmp/jn516x-sdk* &&
       ba-elf-gcc --version ;
     fi
-    
+
   ## Install mainline ARM toolchain and download nRF52 SDK
   - if [ ${BUILD_ARCH:-0} = nrf52dk ] ; then
       sudo add-apt-repository -y ppa:team-gcc-arm-embedded/ppa &&
@@ -120,49 +120,71 @@ before_script:
 
 script:
   ## regression-tests/Makefile handles most of generic logic
-  - "make -C regression-tests/??-$BUILD_TYPE RUNALL=true summary"
+   - ""
 
 after_script:
   ## Print cooja test logs
-  - "[ ${BUILD_CATEGORY:-sim} = sim ] && tail regression-tests/??-$BUILD_TYPE/*.testlog"
+  #- "[ ${BUILD_CATEGORY:-sim} = sim ] && tail regression-tests/??-$BUILD_TYPE/*.testlog"
   ## Print a basic summary
-  - "echo 'Summary:'; cat regression-tests/??-$BUILD_TYPE/summary"
-  - "FAILS=`grep -c  ' FAIL ' regression-tests/??-$BUILD_TYPE/summary`"
+  #- "echo 'Summary:'; cat regression-tests/??-$BUILD_TYPE/summary"
+  #- "FAILS=`grep -c  ' FAIL ' regression-tests/??-$BUILD_TYPE/summary`"
   ## This will detect whether the build should pass or fail
-  - "test $FAILS -eq 0; exit $?"
+  #- "test $FAILS -eq 0; exit $?"
 
 
 env:
-  ## This magically kick-off parallel jobs for each of the for the sets
-  ## of environment variable defined below
-  - BUILD_TYPE='doxygen'  BUILD_CATEGORY='doxygen'
-  - BUILD_TYPE='compile-base' BUILD_CATEGORY='compile'
-  - BUILD_TYPE='compile-tools' BUILD_CATEGORY='compile'
-  - BUILD_TYPE='collect'
-  - BUILD_TYPE='collect-lossy'
-  - BUILD_TYPE='rpl'
-  - BUILD_TYPE='rpl-non-storing'
-  - BUILD_TYPE='large-rpl'
-  - BUILD_TYPE='rime'
-  - BUILD_TYPE='ipv6'
-  - BUILD_TYPE='ip64' MAKE_TARGETS='cooja'
-  - BUILD_TYPE='hello-world'
-  - BUILD_TYPE='base'
-# XXX: netperf disabled b/c it's flaky
-#  - BUILD_TYPE='netperf' MAKE_TARGETS='cooja'
-  - BUILD_TYPE='shell'
-  - BUILD_TYPE='elfloader'
-# Tests under the ipv4 dir are individually disabled. Thus the entire job can be off
-#  - BUILD_TYPE='ipv4'
-  - BUILD_TYPE='ipv6-apps'
-  - BUILD_TYPE='compile-8051-ports' BUILD_CATEGORY='compile' BUILD_ARCH='8051'
-  - BUILD_TYPE='compile-arm-apcs-ports' BUILD_CATEGORY='compile' BUILD_ARCH='arm-apcs'
-  - BUILD_TYPE='compile-6502-ports' BUILD_CATEGORY='compile' BUILD_ARCH='6502'
-  - BUILD_TYPE='compile-arm-ports' BUILD_CATEGORY='compile' BUILD_ARCH='arm-aapcs'
-  - BUILD_TYPE='compile-nxp-ports' BUILD_CATEGORY='compile' BUILD_ARCH='jn516x'
-  - BUILD_TYPE='compile-nrf52-ports' BUILD_CATEGORY='compile' BUILD_ARCH='nrf52dk'
-  - BUILD_TYPE='slip-radio' MAKE_TARGETS='cooja'
-  - BUILD_TYPE='llsec' MAKE_TARGETS='cooja'
-  - BUILD_TYPE='compile-avr' BUILD_CATEGORY='compile' BUILD_ARCH='avr-rss2'
-  - BUILD_TYPE='ieee802154'
-  - BUILD_TYPE='tsch'
+  matrix:
+  # ## This magically kick-off parallel jobs for each of the for the sets
+  # ## of environment variable defined below
+  #   - BUILD_TYPE='doxygen'  BUILD_CATEGORY='doxygen'
+  #   - BUILD_TYPE='compile-base' BUILD_CATEGORY='compile'
+  #   - BUILD_TYPE='compile-tools' BUILD_CATEGORY='compile'
+  #   - BUILD_TYPE='collect'
+  #   - BUILD_TYPE='collect-lossy'
+  #   - BUILD_TYPE='rpl'
+  #   - BUILD_TYPE='rpl-non-storing'
+  #   - BUILD_TYPE='large-rpl'
+  #   - BUILD_TYPE='rime'
+  #   - BUILD_TYPE='ipv6'
+  #   - BUILD_TYPE='ip64' MAKE_TARGETS='cooja'
+  #   - BUILD_TYPE='hello-world'
+  #   - BUILD_TYPE='base'
+  # # XXX: netperf disabled b/c it's flaky
+  # #  - BUILD_TYPE='netperf' MAKE_TARGETS='cooja'
+  #   - BUILD_TYPE='shell'
+  #   - BUILD_TYPE='elfloader'
+  # # Tests under the ipv4 dir are individually disabled. Thus the entire job can be off
+  # #  - BUILD_TYPE='ipv4'
+  #   - BUILD_TYPE='ipv6-apps'
+  #   - BUILD_TYPE='compile-8051-ports' BUILD_CATEGORY='compile' BUILD_ARCH='8051'
+  #   - BUILD_TYPE='compile-arm-apcs-ports' BUILD_CATEGORY='compile' BUILD_ARCH='arm-apcs'
+  #   - BUILD_TYPE='compile-6502-ports' BUILD_CATEGORY='compile' BUILD_ARCH='6502'
+  #   - BUILD_TYPE='compile-arm-ports' BUILD_CATEGORY='compile' BUILD_ARCH='arm-aapcs'
+  #   - BUILD_TYPE='compile-nxp-ports' BUILD_CATEGORY='compile' BUILD_ARCH='jn516x'
+  #   - BUILD_TYPE='compile-nrf52-ports' BUILD_CATEGORY='compile' BUILD_ARCH='nrf52dk'
+  #   - BUILD_TYPE='slip-radio' MAKE_TARGETS='cooja'
+  #   - BUILD_TYPE='llsec' MAKE_TARGETS='cooja'
+  #   - BUILD_TYPE='compile-avr' BUILD_CATEGORY='compile' BUILD_ARCH='avr-rss2'
+  #   - BUILD_TYPE='ieee802154'
+  #   - BUILD_TYPE='tsch'
+
+  global:
+    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+    #   via the "travis encrypt" command using the project repo's public key
+     - secure: "SsFI6hWX/TmAckgqC2/flaRUeDFZ0Si6QM/eelLzs4i7tp8OlGbO+Lx5di3Y/X4ywDf1cD9VJqdMSZDCkdEED17Xc1gijaixjbaQG/4zInAs3vWkuwAlHLFDsnDbajShTAyPtUAPRvLopY5LBpAjQzv8F5auk31bw3H68CMDaXyOh/fmGef06OvRJPZbUx/eCJZKsyLXxDQ9xcsFOt5LTsTOqIYA1QjJyUDhCw4TASH1vagbUI+eiRGnGPZayYtKEUZmHEWY80ZDTO6EDg80YAWdtylIKFLdySt7ZXMDbMIkN33P7LcplPXj4ujWuM/+Wb6cQnIt+7yw+Jn0RHne9W9j/dTxQEMhZU/yAjcHX8o6FMdiMNCGTFueHDDVspdykGubCp/Zyxx73f56J5vfVwS4FQxyNHFsheKMnoJyAzfjh+T/DIUXv//FXz1wQoM2lHnkqZ++X6SGxIM8oC3aXR5CQiikGfxbzCj7BqsSPmoVgrRNTpx/iqFm+hEitUSJtT1z0wAu+meFMp4olByrl+FQEn2kAW2QTVOF951oq/MB1NB1PRzmGwSTStL1Nt7FK+ca7+xjAaPeNsBTAvnhcO0s4XfImWdU+tbecyuAwmJkOHjwhAd1r3nq7KEIN27DviZvT+yU0jqp9K+DvdWeA14P04mm0DwHGw8NFF9ZUg4="
+
+addons:
+  coverity_scan:
+    project:
+      name: "alexandruioanp/contiki"
+    notification_email: alexandruioanp@yahoo.co.uk
+    build_command_prepend: "sudo apt-get -qq install srecord &&
+      wget https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major/+download/gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2 &&
+      tar xjf gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2 -C /tmp/ &&
+      sudo cp -f -r /tmp/gcc-arm-none-eabi-5_2-2015q4/* /usr/local/ &&
+      rm -rf /tmp/gcc-arm-none-eabi-* gcc-arm-none-eabi-*-linux.tar.bz2 &&
+      arm-none-eabi-gcc --version &&
+      BUILD_TYPE='compile-arm-ports' &&
+      /tmp/coverity-scan-analysis/*/bin/cov-configure --comptype gcc --compiler arm-none-eabi-gcc --template ;"
+    build_command:   "make -j 2 -C regression-tests/??-compile-arm-ports RUNALL=true"
+    branch_pattern: coverity
